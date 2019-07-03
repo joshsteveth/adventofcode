@@ -56,12 +56,17 @@ func main() {
 	defer cancel()
 
 	ch := make(chan int)
-	go taskOne(ch)
-	go taskTwo(ch)
 
-	numTask := 2
+	tasks := []func(chan<- int){
+		taskOne,
+		taskTwo,
+	}
 
-	for i := 0; i < numTask; i++ {
+	for _, t := range tasks {
+		go t(ch)
+	}
+
+	for i := 0; i < len(tasks); i++ {
 		select {
 		case <-ctx.Done():
 			panic("context cancelled")
