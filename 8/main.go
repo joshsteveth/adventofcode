@@ -12,6 +12,7 @@ const (
 )
 
 var input []int
+var sum int
 
 func main() {
 
@@ -21,14 +22,20 @@ func main() {
 		input = append(input, i)
 	}
 
-	var sum int
+	calculateMetaDataPartOne()
 
-	calculateMetaData(&sum)
+	fmt.Printf("result part 1 : %d\n", sum)
 
-	fmt.Println(sum)
+	for _, str := range inputStr {
+		i, _ := strconv.Atoi(str)
+		input = append(input, i)
+	}
+
+	sum = calculateMetaDataPartTwo(true)
+	fmt.Printf("result part 2 : %d\n", sum)
 }
 
-func calculateMetaData(sum *int) {
+func calculateMetaDataPartOne() {
 
 	if len(input) == 0 {
 		return
@@ -45,7 +52,7 @@ func calculateMetaData(sum *int) {
 		// if we don't have any more node
 		// then we only need to add the meta data
 		for i := 0; i < numMetaData; i++ {
-			*sum += input[i]
+			sum += input[i]
 		}
 
 		// cut the meta data as well
@@ -54,11 +61,62 @@ func calculateMetaData(sum *int) {
 	}
 
 	for i := 0; i < numNode; i++ {
-		calculateMetaData(sum)
+		calculateMetaDataPartOne()
 	}
 
 	for i := 0; i < numMetaData; i++ {
-		*sum += input[0]
+		sum += input[0]
 		input = input[1:]
 	}
+}
+
+func calculateMetaDataPartTwo(root bool) int {
+
+	if len(input) == 0 {
+		return 0
+	}
+
+	numNode, numMetaData := input[0], input[1]
+
+	// we don't need these values anymore
+	// let's just cut it (?)
+	input = input[2:]
+
+	if numNode == 0 {
+
+		var nodeSum int
+
+		// if we don't have any more node
+		// then we only need to add the meta data
+		for i := 0; i < numMetaData; i++ {
+			nodeSum += input[i]
+		}
+
+		// cut the meta data as well
+		input = input[numMetaData:]
+		return nodeSum
+	}
+
+	var sums []int
+
+	for i := 0; i < numNode; i++ {
+		sums = append(sums, calculateMetaDataPartTwo(false))
+	}
+
+	var nodeSum int
+
+	for i := 0; i < numMetaData; i++ {
+		if res := input[0]; res <= numNode {
+			nodeSum += sums[res-1]
+		}
+
+		input = input[1:]
+	}
+
+	if root {
+		sum = nodeSum
+	}
+
+	return nodeSum
+
 }
