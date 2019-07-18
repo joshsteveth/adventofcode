@@ -132,7 +132,7 @@ func main() {
 
 	var counter int
 
-	//scanner := bufio.NewScanner(os.Stdin)
+	// scanner := bufio.NewScanner(os.Stdin)
 	for {
 		counter++
 		fmt.Printf("%d.iteration...\n", counter)
@@ -146,16 +146,33 @@ func main() {
 			return ci.y < cj.y
 		})
 
+		coordToRemove := [][2]int{}
+
 		for _, c := range carts {
-			fmt.Println("")
-			// move all carts 1 step
 			var err error
+
+			for _, rm := range coordToRemove {
+				if c.x == rm[0] && c.y == rm[1] {
+					goto doNothing
+				}
+			}
+
+			// move all carts 1 step
 			currentMap, err = c.move(oldMap, currentMap)
 			if err != nil {
 				fmt.Println(err)
-				return
+				coordToRemove = append(coordToRemove, [2]int{c.x, c.y})
 			}
+		doNothing:
+		}
 
+		for _, rm := range coordToRemove {
+			carts = removeColidingCarts(carts, rm[0], rm[1])
+		}
+
+		if len(carts) == 1 {
+			fmt.Printf("the remaining cart: %+v\n", carts[0])
+			return
 		}
 
 		if verbose {
@@ -252,11 +269,11 @@ func (c *cart) move(oldMap, maps [][]string) (newMap [][]string, err error) {
 	}
 
 	if err != nil {
+		newMap[c.y][c.x] = oldMap[c.y][c.x]
 		newMap[newCoord[1]][newCoord[0]] = oldMap[newCoord[1]][newCoord[0]]
 		c.x = newCoord[0]
 		c.y = newCoord[1]
 		return newMap, err
-
 	}
 
 	newMap[c.y][c.x] = oldMap[c.y][c.x]
@@ -267,6 +284,17 @@ func (c *cart) move(oldMap, maps [][]string) (newMap [][]string, err error) {
 	c.form = newChar
 
 	return newMap, nil
+}
+
+func removeColidingCarts(carts []*cart, x, y int) (remainingCarts []*cart) {
+
+	for _, c := range carts {
+		if c.x == x && c.y == y {
+			continue
+		}
+		remainingCarts = append(remainingCarts, c)
+	}
+	return
 }
 
 func renderCoordinates(maps [][]string, carts []*cart) (coordinates [][]string) {
