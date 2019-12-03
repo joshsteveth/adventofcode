@@ -6,11 +6,17 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"time"
 
 	"github.com/joshsteveth/adventofcode/util"
 )
 
 func main() {
+
+	t := time.Now()
+	defer func(t time.Time) {
+		fmt.Printf("runtime: %v\n", time.Since(t))
+	}(t)
 
 	inputs, err := util.ReadLines("input.txt")
 	util.Must(err)
