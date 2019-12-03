@@ -90,9 +90,7 @@ func partTwo(inputs []string, wg *sync.WaitGroup) {
 	fmt.Printf("part two result: %v\n", calculate(inputs, calculateWholeFuel))
 }
 
-type calcFunc func(float64) int
-
-func calculate(inputs []string, c calcFunc) int {
+func calculate(inputs []string, c func(float64) int) int {
 
 	var sum int
 	for _, l := range inputs {
