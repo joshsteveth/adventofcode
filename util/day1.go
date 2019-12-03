@@ -20,3 +20,9 @@ func ReadLines(filename string) ([]string, error) {
 
 	return result, scanner.Err()
 }
+
+func Must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
