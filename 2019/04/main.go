@@ -25,7 +25,7 @@ func main() {
 	wg.Add(len(parts))
 
 	for i, iv := range parts {
-		go func(iv isValid) {
+		go func(part int, iv isValid) {
 			defer wg.Done()
 			var sum int
 			for i := min; i <= max; i++ {
@@ -33,8 +33,8 @@ func main() {
 					sum++
 				}
 			}
-			fmt.Printf("part %d result: %d\n", i+1, sum)
-		}(iv)
+			fmt.Printf("part %d result: %d\n", part, sum)
+		}(i+1, iv)
 	}
 
 	wg.Wait()
