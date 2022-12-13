@@ -2,6 +2,7 @@ package util
 
 import (
 	"bufio"
+	"errors"
 	"os"
 )
 
@@ -22,7 +23,7 @@ func ReadLines(filename string) ([]string, error) {
 }
 
 func Must(err error) {
-	if err != nil {
+	if errors.Unwrap(err) != nil {
 		panic(err)
 	}
 }
